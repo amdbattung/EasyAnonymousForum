@@ -1,7 +1,6 @@
 ﻿using EasyAnonymousForum.Data;
 using EasyAnonymousForum.Server.Features.Queries;
 using EasyAnonymousForum.Server.Features.Threads.DTOs;
-using EasyAnonymousForum.Server.Features.Topics.DTOs;
 using EasyAnonymousForum.Server.Models;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -9,7 +8,6 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NodaTime;
 
 namespace EasyAnonymousForum.Server.Features.Threads
 {
@@ -21,16 +19,19 @@ namespace EasyAnonymousForum.Server.Features.Threads
         private readonly IValidator<CreateThreadDto> _createThreadValidator;
         private readonly IValidator<UpdateThreadDto> _updateThreadValidator;
         private readonly IValidator<QueryObject> _queryObjectValidator;
+        private readonly ILogger<ThreadController> _logger;
 
         public ThreadController(DataContext context,
             IValidator<CreateThreadDto> createThreadValidator,
             IValidator<UpdateThreadDto> updateThreadValidator,
-            IValidator<QueryObject> queryObjectValidator)
+            IValidator<QueryObject> queryObjectValidator,
+            ILogger<ThreadController> logger)
         {
             this._context = context;
             this._createThreadValidator = createThreadValidator;
             this._updateThreadValidator = updateThreadValidator;
             this._queryObjectValidator = queryObjectValidator;
+            this._logger = logger;
         }
 
         [HttpGet(Name = "IndexThreads")]
@@ -116,7 +117,7 @@ namespace EasyAnonymousForum.Server.Features.Threads
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<GetTopicDto>> ShowAsync([FromRoute] string id)
+        public async Task<ActionResult<GetThreadDto>> ShowAsync([FromRoute] string id)
         {
             if (string.IsNullOrWhiteSpace(id))
             {

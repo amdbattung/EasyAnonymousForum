@@ -7,6 +7,7 @@ using NodaTime;
 using System.Text.Json.Serialization;
 using EasyAnonymousForum.Server.Extensions.ServiceExtensions;
 using EasyAnonymousForum.Server.Exceptions;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +49,9 @@ builder.Services.AddControllers(options =>
         options.JsonSerializerOptions.ConfigureForNodaTime(NodaTime.DateTimeZoneProviders.Tzdb);
     });
 
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration));
+
 builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -64,6 +68,8 @@ builder.Services.AddDataContext(builder.Configuration);
 #region Build App
 var app = builder.Build();
 
+app.Logger.LogInformation("Starting up server");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -79,9 +85,9 @@ else
     app.UseHttpsRedirection();
 }
 
-app.UseCors();
+app.UseSerilogRequestLogging();
 
-app.UseHttpsRedirection();
+app.UseCors();
 
 app.UseAuthorization();
 

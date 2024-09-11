@@ -1,8 +1,6 @@
 ﻿using EasyAnonymousForum.Data;
 using EasyAnonymousForum.Server.Features.Comments.DTOs;
 using EasyAnonymousForum.Server.Features.Queries;
-using EasyAnonymousForum.Server.Features.Threads.DTOs;
-using EasyAnonymousForum.Server.Features.Threads.Validators;
 using EasyAnonymousForum.Server.Models;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -10,29 +8,30 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NodaTime;
-using System.Threading;
 
 namespace EasyAnonymousForum.Server.Features.Comments
 {
-    [Route("api/comments")]
     [ApiController]
+    [Route("api/comments")]
     public class CommentController : ControllerBase
     {
         private readonly DataContext _context;
         private readonly IValidator<CreateCommentDto> _createCommentValidator;
         private readonly IValidator<UpdateCommentDto> _updateCommentValidator;
         private readonly IValidator<QueryObject> _queryObjectValidator;
+        private readonly ILogger<CommentController> _logger;
 
         public CommentController(DataContext context,
             IValidator<CreateCommentDto> createCommentValidator,
             IValidator<UpdateCommentDto> updateCommentValidator,
-            IValidator<QueryObject> queryObjectValidator)
+            IValidator<QueryObject> queryObjectValidator,
+            ILogger<CommentController> logger)
         {
             this._context = context;
             this._createCommentValidator = createCommentValidator;
             this._updateCommentValidator = updateCommentValidator;
             this._queryObjectValidator = queryObjectValidator;
+            this._logger = logger;
         }
 
         [HttpGet(Name = "IndexComments")]

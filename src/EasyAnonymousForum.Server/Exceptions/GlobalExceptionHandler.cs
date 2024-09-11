@@ -5,9 +5,11 @@ namespace EasyAnonymousForum.Server.Exceptions
 {
     public class GlobalExceptionHandler : IExceptionHandler
     {
-        public GlobalExceptionHandler()
+        private readonly ILogger<GlobalExceptionHandler> _logger;
+
+        public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
         {
-            // TODO: Logger
+            _logger = logger;
         }
 
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)

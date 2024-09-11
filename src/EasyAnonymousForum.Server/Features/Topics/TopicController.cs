@@ -20,16 +20,19 @@ namespace EasyAnonymousForum.Server.Features.Topics
         private readonly IValidator<CreateTopicDto> _createTopicValidator;
         private readonly IValidator<UpdateTopicDto> _updateTopicValidator;
         private readonly IValidator<QueryObject> _queryObjectValidator;
+        private readonly ILogger<TopicController> _logger;
 
         public TopicController(DataContext context,
             IValidator<CreateTopicDto> createTopicValidator,
             IValidator<UpdateTopicDto> updateTopicValidator,
-            IValidator<QueryObject> queryObjectValidator)
+            IValidator<QueryObject> queryObjectValidator,
+            ILogger<TopicController> logger)
         {
             this._context = context;
             this._createTopicValidator = createTopicValidator;
             this._updateTopicValidator = updateTopicValidator;
             this._queryObjectValidator = queryObjectValidator;
+            this._logger = logger;
         }
 
         [HttpGet(Name = "IndexTopics")]
